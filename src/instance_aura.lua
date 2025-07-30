@@ -1,26 +1,28 @@
-print(">>Script: InstanceAura loading...OK")
+-- Carregando o script: Aura de Instância
 
--- 副本类型
-local DUNGEON = 1
-local HEROIC  = 2
-local RAID    = 3
+print(">> Script: Aura de Instância carregado... OK")
 
--- 阵营
-local ALLIANCE = 1
-local HORDE    = 2
+-- Tipos de instâncias
+local DUNGEON = 1 -- Masmorra
+local HEROIC = 2  -- Heroico
+local RAID = 3    -- Raide
 
--- 职业
-local CLASS_HUNTER = 3 --猎人
+-- Facções
+local ALLIANCE = 1 -- Aliança
+local HORDE = 2    -- Horda
+
+-- Classes
+local CLASS_HUNTER = 3 -- Caçador
 
 --[[
-    --联盟光环
+    -- Aura da Aliança
     73762, -- 5%
     73824, -- 10%
     73825, -- 15%
     73826, -- 20%
     73827, -- 25%
     73828, -- 30%
-    --部落光环
+    -- Aura da Horda
     73816, -- 5%
     73818, -- 10%
     73819, -- 15%
@@ -29,23 +31,24 @@ local CLASS_HUNTER = 3 --猎人
     73822, -- 30%
 ]]
 
+-- Tabela de Auras
 local AURAS = {
     [ALLIANCE] = {
         [DUNGEON] = 73826, -- 20%
-        [HEROIC]  = 73827, -- 25%
-        [RAID]    = 73828, -- 30%
+        [HEROIC] = 73827,  -- 25%
+        [RAID] = 73828,    -- 30%
     },
     [HORDE] = {
         [DUNGEON] = 73820, -- 20%
-        [HEROIC]  = 73821, -- 25%
-        [RAID]    = 73822, -- 30%
+        [HEROIC] = 73821,  -- 25%
+        [RAID] = 73822,    -- 30%
     },
 }
 
 -- Função para adicionar aura com base no tipo de instância
 local function AddAuraByInstanceType(player, instanceType)
     if not player then
-        print("Erro: Player é nulo.")
+        print("Erro: Jogador é nulo.")
         return
     end
 
@@ -55,7 +58,7 @@ local function AddAuraByInstanceType(player, instanceType)
 
     if auraId and auraId > 0 then
         player:AddAura(auraId, player)
-        print(string.format("Adicionado Aura ID %d para jogador %s", auraId, player:GetName()))
+        print(string.format("Aura ID %d adicionada para o jogador %s", auraId, player:GetName()))
     else
         print("Erro: Aura ID inválida ou inexistente.")
     end
@@ -64,7 +67,7 @@ end
 -- Função para limpar todas as auras relacionadas ao jogador
 local function ClearAura(player)
     if not player then
-        print("Erro: Player é nulo.")
+        print("Erro: Jogador é nulo.")
         return
     end
 
@@ -74,7 +77,7 @@ local function ClearAura(player)
     for _, auraId in pairs(auras) do
         if player:HasAura(auraId) then
             player:RemoveAura(auraId)
-            print(string.format("Removido Aura ID %d para jogador %s", auraId, player:GetName()))
+            print(string.format("Aura ID %d removida para o jogador %s", auraId, player:GetName()))
         end
     end
 end
@@ -89,15 +92,15 @@ local function PlayerChangeMap(event, player)
     if player:GetMap():IsDungeon() then
         ClearAura(player)
         AddAuraByInstanceType(player, DUNGEON)
-        player:SendAreaTriggerMessage("您已获得地下城强化光环")
+        player:SendAreaTriggerMessage("Você recebeu a aura de reforço de masmorra")
     elseif player:GetMap():IsHeroic() then
         ClearAura(player)
         AddAuraByInstanceType(player, HEROIC)
-        player:SendAreaTriggerMessage("您已获得英雄地下城强化光环")
+        player:SendAreaTriggerMessage("Você recebeu a aura de reforço de heroico")
     elseif player:GetMap():IsRaid() then
         ClearAura(player)
         AddAuraByInstanceType(player, RAID)
-        player:SendAreaTriggerMessage("您已获得团队地下城强化光环")
+        player:SendAreaTriggerMessage("Você recebeu a aura de reforço de raide")
     else
         ClearAura(player)
     end
